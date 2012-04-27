@@ -1,21 +1,42 @@
-/*
-Wumpus sketch - a simple implementation of the classic game Wumpus (or Hunt the Wumpus)
-
-http://en.wikipedia.org/wiki/Wumpus
-
-In this variant, there are twenty rooms layed out like a d20; therefore, each room is connected
-to three other rooms.  Two rooms are bottomless pits; if you fall in to a bottomless pit you lose.
-Two rooms contain giant bats; if you enter a room with a giant bat it will pick you up and carry
-you to a random room.  One room contains a wumpus; if you bump into the Wumpus, it will eat you and
-you lose.  You have 2 arrows; if you shoot the Wumpus, you win.  If you run out of arrows, you lose.
-
-Resources:
-Adafruit RGB LCD Shield Kit w/ 16x2 Character Display
-http://www.adafruit.com/products/716
-
-Arduino Uno
-http://www.adafruit.com/products/50
-*/
+// -------------------------------------------------------------------------------
+// An Arduino sketch that implements the classic game Hunt the Wumpus
+//
+// http://en.wikipedia.org/wiki/Wumpus
+//
+// In this variant, there are twenty rooms layed out like a d20; therefore, each room is connected
+// to three other rooms.  Two rooms are bottomless pits; if you fall in to a bottomless pit you lose.
+// Two rooms contain giant bats; if you enter a room with a giant bat it will pick you up and carry
+// you to a random room.  One room contains a wumpus; if you bump into the Wumpus, it will eat you and
+// you lose.  You have 2 arrows; if you shoot the Wumpus, you win.  If you run out of arrows, you lose.
+//
+// MIT license.
+//
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+// SOFTWARE.
+//
+//
+//      ******************************************************
+//      Designed for the Adafruit RGB LCD Shield Kit
+//      http://www.adafruit.com/products/716
+//      or
+//      Adafruit Negative RGB LCD Shield Kit
+//      http://www.adafruit.com/products/714
+//      ******************************************************
+//
+//
+// --------------------------------------------------------------------------------
+// Dependencies
+// --------------------------------------------------------------------------------
+// Adafruit Industries's RGB 16x2 LCD Shield library:
+//       https://github.com/adafruit/Adafruit-RGB-LCD-Shield-Library
+// Adafruit Industries's MCP23017 I2C Port Expander library:
+//       https://github.com/adafruit/Adafruit-MCP23017-Arduino-Library
+// --------------------------------------------------------------------------------
 #include <Wire.h>
 #include <Adafruit_MCP23017.h>
 #include <Adafruit_RGBLCDShield.h>
