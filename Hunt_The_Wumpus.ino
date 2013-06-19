@@ -573,7 +573,7 @@ void arrow_missed() {
 // Game over states / functions
 // -------------------------------------------------------------------------------
 
-void draw_game_over_screen(uint8_t backlight, __FlashStringHelper *message, uint8_t icon) {
+void draw_game_over_screen(uint8_t backlight, const __FlashStringHelper *message, uint8_t icon) {
   lcd.clear();
   lcd.setBacklight(backlight);
   lcd.print(message);
