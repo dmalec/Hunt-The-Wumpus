@@ -25,3 +25,4 @@ Changes
 -------
 2013-08-29 JG - The program can now be compiled on Arduino 1.0.5
 2013-08-29 JG - Rooms can only contain up to one hazard now (fixed the problem that hazards that were present in the same room didn't show up on the screen)
+2013-08-29 JG - Added map.txt
