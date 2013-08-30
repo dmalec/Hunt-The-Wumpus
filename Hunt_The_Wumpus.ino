@@ -74,20 +74,8 @@ const uint8_t cave[20][3] = { { 2,  8, 14},    //  0
 //! Index in the map of the room the player is in.
 uint8_t player_room;
 
-//! Index in the map of the room the wumpus is in.
-uint8_t wumpus_room;
-
-//! Index in the map of the room the first pit is in.
-uint8_t pit1_room;
-
-//! Index in the map of the room the second pit is in.
-uint8_t pit2_room;
-
-//! Index in the map of the room the first bat is in.
-uint8_t bat1_room;
-
-//! Index in the map of the room the second bat is in.
-uint8_t bat2_room;
+//! Hazards in each room
+uint8_t hazards[20];
 
 //! Count of how many arrows the player has left.
 uint8_t arrow_count;
@@ -247,24 +235,11 @@ void highlight_current_menu() {
 
 //! Check for left and right button clicks and update the menu index as needed.
 void handle_menu() {
-  if (clicked_buttons & BUTTON_LEFT) {
+  if (clicked_buttons & (BUTTON_LEFT | BUTTON_UP)) {
     selected_menu_idx = (selected_menu_idx > 0) ? selected_menu_idx - 1 : 3;
-  } else if (clicked_buttons & BUTTON_RIGHT) {
+  } else if (clicked_buttons & (BUTTON_RIGHT | BUTTON_DOWN)) {
     selected_menu_idx = (selected_menu_idx < 3) ? selected_menu_idx + 1 : 0;
   } 
-}
-
-//! Check a cave index for hazards.
-HazardType check_for_hazards(uint8_t room_idx) {
-  if (room_idx == bat1_room || room_idx == bat2_room) {
-    return BAT;
-  } else if (room_idx == pit1_room || room_idx == pit2_room) {
-    return PIT;
-  } else if (room_idx == wumpus_room) {
-    return WUMPUS;
-  } else {
-    return NONE;
-  }
 }
 
 //! Initial game state, draw the splash screen.
@@ -302,19 +277,46 @@ void animate_splash_screen() {
   }
 }
 
+//! Put the given hazard in a random room
+/*
+  The function generates a random room into which it puts the given hazard.
+  It keeps trying until it finds a room that doesn't already have another
+  hazard.
+*/
+void init_hazard(HazardType hazard)
+{
+  for(;;) {
+    int index = random(20);
+    
+    if (!hazards[index])
+    {
+      hazards[index] = (uint8_t)hazard;
+      break;
+    }
+  }
+}
+
 //! Initialize a new game.
 /*
   Randomize locations and reset variables.
 */
 void start_game() {
   lcd.clear();
-  
-  player_room = random(20);
-  wumpus_room = random(20);
-  pit1_room = random(20);
-  pit2_room = random(20);
-  bat1_room = random(20);
-  bat2_room = random(20);
+
+  for (int i = 0; i < 20; i++) {
+    hazards[i] = 0;
+  }
+  init_hazard(WUMPUS);
+  init_hazard(PIT);
+  init_hazard(PIT);
+  init_hazard(BAT);
+  init_hazard(BAT);
+
+  // Make sure the player starts in a room with no hazards.
+  // It's not fun to be killed before you make the first move.
+  do {
+    player_room = random(20);
+  } while (hazards[player_room]);
 
   arrow_count = 2;
   selected_menu_idx = 0;
@@ -331,7 +333,7 @@ void status_delay() {
 
 //! Check for hazards when a player changes rooms
 void begin_move_room() {
-  switch (check_for_hazards(player_room)) {    
+  switch (hazards[player_room]) {    
     case BAT:
       state = begin_bat_move;
       break;
@@ -381,11 +383,9 @@ void animate_bat_move() {
 }
 
 void end_bat_move() {
-  if (player_room == bat1_room) {
-    bat1_room = random(20);
-  } else  {
-    bat2_room = random(20);
-  }
+  hazards[player_room] = 0;
+  init_hazard(BAT);
+
   player_room = random(20);
   
   state = begin_move_room;
@@ -405,7 +405,7 @@ void enter_new_room() {
   print_cave_number(player_room);
   
   for (int i=0; i<3; i++) {
-    adjacent_hazards |= check_for_hazards(cave[player_room][i]);
+    adjacent_hazards |= hazards[cave[player_room][i]];
   }
   
   lcd.print(' ');    
@@ -519,7 +519,7 @@ void cancel_input_arrow() {
   int adjacent_hazards = NONE;
 
   for (int i=0; i<3; i++) {
-    adjacent_hazards |= check_for_hazards(cave[player_room][i]);
+    adjacent_hazards |= hazards[cave[player_room][i]];
   }
 
   if (adjacent_hazards) {
@@ -549,7 +549,7 @@ void animate_shooting_arrow() {
   }
   
   if (time - last_state_change_time >= 3000) {
-    if (arrow_room == wumpus_room) {
+    if (hazards[arrow_room] == WUMPUS) {
       state = game_over_win;
     } else {
       state = arrow_missed;
@@ -573,7 +573,7 @@ void arrow_missed() {
 // Game over states / functions
 // -------------------------------------------------------------------------------
 
-void draw_game_over_screen(uint8_t backlight, __FlashStringHelper *message, uint8_t icon) {
+void draw_game_over_screen(uint8_t backlight, const __FlashStringHelper *message, uint8_t icon) {
   lcd.clear();
   lcd.setBacklight(backlight);
   lcd.print(message);
