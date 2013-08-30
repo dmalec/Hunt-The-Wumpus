@@ -235,9 +235,9 @@ void highlight_current_menu() {
 
 //! Check for left and right button clicks and update the menu index as needed.
 void handle_menu() {
-  if (clicked_buttons & BUTTON_LEFT) {
+  if (clicked_buttons & (BUTTON_LEFT | BUTTON_UP)) {
     selected_menu_idx = (selected_menu_idx > 0) ? selected_menu_idx - 1 : 3;
-  } else if (clicked_buttons & BUTTON_RIGHT) {
+  } else if (clicked_buttons & (BUTTON_RIGHT | BUTTON_DOWN)) {
     selected_menu_idx = (selected_menu_idx < 3) ? selected_menu_idx + 1 : 0;
   } 
 }
