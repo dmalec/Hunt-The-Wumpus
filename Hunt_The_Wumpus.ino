@@ -312,7 +312,11 @@ void start_game() {
   init_hazard(BAT);
   init_hazard(BAT);
 
-  player_room = random(20);
+  // Make sure the player starts in a room with no hazards.
+  // It's not fun to be killed before you make the first move.
+  do {
+    player_room = random(20);
+  } while (hazards[player_room]);
 
   arrow_count = 2;
   selected_menu_idx = 0;
