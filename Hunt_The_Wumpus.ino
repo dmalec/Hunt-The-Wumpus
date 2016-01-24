@@ -38,8 +38,9 @@
 //       https://github.com/adafruit/Adafruit-MCP23017-Arduino-Library
 // --------------------------------------------------------------------------------
 #include <Wire.h>
-#include <Adafruit_MCP23017.h>
+#include <Wire.h>
 #include <Adafruit_RGBLCDShield.h>
+#include <utility/Adafruit_MCP23017.h>
 #include "Hunt_The_Wumpus.h"
 
 
